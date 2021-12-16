@@ -1,8 +1,9 @@
-const Express = require("express");
+const express = require("express");
 const Joi = require("joi");
+const xml = require("xml");
 
-const app = Express();
-app.use(Express.json());
+const app = express();
+app.use(express.json());
 
 // Database.
 const courses = [
@@ -65,6 +66,23 @@ app.delete("/api/courses/delete", (req, res) => {
   courses.splice(index, 1);
 
   res.send(course);
+});
+
+// Get course list with xml formate
+app.get("/api/courses.xml", (req, res) => {
+  let data = `<?xml version="1.0" encoding="UTF-8" ?>`;
+
+  data += `<courses>`;
+  courses.forEach(({ id, name }) => {
+    data += `<item> 
+              <id>${id}</id>
+              <name>${name}</name>
+            </item>`;
+  });
+  data += `</courses>`;
+
+  res.header("Content-Type", "application/xml");
+  res.send(data);
 });
 
 // Listen application
